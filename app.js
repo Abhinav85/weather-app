@@ -1,14 +1,27 @@
-// const request = require('request');
-const http = require('http');
+// const http = require('http');
 const axios = require('axios');
+const express = require('express');
+const fs = require('fs');
 const port = process.env.PORT || 3000;
 
-var city;
+var app = express();
+app.use(express.static(__dirname + '/public'))
+
+app.use((req,res,next) => {
+    var now = new Date().toString();
+    fs.appendFile('server.log',`${now} ${req.method} \n`,(err) => {
+        console.log(err);
+    });
+    next();
+})
 
 
-var server = http.createServer((req,resp) => {
-    city = req.url.substring(1) 
+app.get('/',(req,res) => {
 
+})
+
+app.get('/:city', (req,res) => {
+    const city = req.params.city;
     const header = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
@@ -19,11 +32,11 @@ var server = http.createServer((req,resp) => {
     axios({
         method : 'get',
         url : url,
-    }).then((res) => {
-        if(res.status === 200){
-            console.log('The first call');
-            resp.writeHead(200,header)
-            resp.end(JSON.stringify(res.data));
+    }).then((resp) => {
+        if(resp.status === 200){
+            res.send(JSON.stringify(resp.data));
+            res.send('OK')
+            
         }
     }).catch((error) => {
         console.log('Error')
@@ -33,7 +46,7 @@ var server = http.createServer((req,resp) => {
 
 
 
-
-server.listen(port, () => {
+app.listen(port, () => {
     console.log("Port is up ", port);
 });
+
