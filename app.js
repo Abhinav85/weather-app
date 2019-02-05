@@ -1,7 +1,7 @@
 // const request = require('request');
 const http = require('http');
 const axios = require('axios');
-
+const port = process.env.PORT || 3000;
 
 var city;
 
@@ -34,4 +34,6 @@ var server = http.createServer((req,resp) => {
 
 
 
-server.listen(3001);
+server.listen(port, () => {
+    console.log("Port is up ", port);
+});
