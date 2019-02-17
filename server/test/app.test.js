@@ -57,5 +57,15 @@ describe('#ApiTests', () => {
         })
 
     })
+
+    it('Should Get all the searched Locations', (done) => {
+        request(app)
+        .get('/userLocation')
+        .expect(200)
+        .expect((res) => {
+            expect(res.body.locations[0]).toIncludeKeys(['name','coord','weather','main']);
+        })
+        .end(done)
+    })
 })
 
