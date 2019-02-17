@@ -5,6 +5,7 @@ const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser');
 const {location} = require('./models/locationsSearched');
 const {user} = require('./models/user');
+const {ObjectID} = require('mongodb');
 
 
 /// Server Connection
@@ -84,6 +85,25 @@ app.post('/signUp',(req,res) => {
         })
     })
 })  
+
+
+
+app.get('/userLocation',(req,res) => {
+    let userId = req.get('user-id') || '';
+    if(ObjectID.isValid(userId)){
+        location.find({_id : userId}).then((locations) => {
+            if(locations){
+            res.send({locations,isSuccess : true});
+            }else{
+                res.send([]);
+            }
+        })
+    }else{
+        return res.status(404).send("Wrong User ID")
+    }
+},err => {
+    res.status(400).send(err)
+})
 
 
 
